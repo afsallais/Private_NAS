@@ -76,7 +76,7 @@ final class NetworkDiscoveryService: ObservableObject {
                 let device = NetworkDevice(
                     id: key,
                     name: name,
-                    host: name,
+                    host: name.hasSuffix(".local") ? name : "\(name).local",
                     port: 445,
                     type: type.contains("smb") ? .smb : .http,
                     shareName: nil,
