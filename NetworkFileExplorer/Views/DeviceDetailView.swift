@@ -14,6 +14,13 @@ struct DeviceDetailView: View {
     @State private var showOpenError = false
     @State private var showCopied = false
     
+    private var connectionLabel: String {
+        if let share = device.shareName {
+            return "\(device.host) / \(share)"
+        }
+        return shareName.isEmpty ? device.host : "\(device.host) / \(shareName)"
+    }
+    
     private var smbURL: URL? {
         let share = shareName.isEmpty ? "shared" : shareName
         let host = device.host.hasSuffix(".local") ? device.host : "\(device.host)"
@@ -23,46 +30,48 @@ struct DeviceDetailView: View {
     var body: some View {
         List {
             Section {
-                VStack(alignment: .leading, spacing: 16) {
-                    Image(systemName: "externaldrive.connected.to.line.below")
-                        .font(.system(size: 48))
-                        .foregroundStyle(.secondary)
+                VStack(spacing: 24) {
+                    Image(systemName: "folder.badge.plus")
+                        .font(.system(size: 56))
+                        .foregroundStyle(.accent)
                     
-                    Text("Open in Files")
+                    Text(connectionLabel)
                         .font(.title2.weight(.semibold))
-                    
-                    Text("iOS Files app has built-in SMB support. Tap below to open this share in Files.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                    
-                    if device.shareName == nil {
-                        TextField("Share name", text: $shareName)
-                            .textContentType(.none)
-                            .autocapitalization(.none)
-                            .padding(.vertical, 8)
-                    }
+                        .multilineTextAlignment(.center)
                     
                     Button {
                         openInFiles()
                     } label: {
-                        Label("Open in Files", systemImage: "folder.badge.plus")
-                            .font(.headline)
+                        Label("Open in Files", systemImage: "arrow.up.forward")
+                            .font(.title3.weight(.semibold))
                             .frame(maxWidth: .infinity)
-                            .padding()
+                            .padding(.vertical, 16)
                     }
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    
+                    if device.shareName == nil {
+                        TextField("Share name (e.g. Video)", text: $shareName)
+                            .textContentType(.none)
+                            .autocapitalization(.none)
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
                     
                     Button {
                         copyURL()
                     } label: {
-                        Label("Copy URL", systemImage: "doc.on.doc")
-                            .font(.subheadline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
+                        HStack {
+                            Image(systemName: "doc.on.doc")
+                            Text("Copy address")
+                        }
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                     }
-                    .buttonStyle(.bordered)
                 }
-                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
             }
         }
         .listStyle(.insetGrouped)
