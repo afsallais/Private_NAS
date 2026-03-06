@@ -6,9 +6,8 @@ A modern iOS app that discovers devices and file shares on your local network an
 
 - **Automatic discovery** – Finds SMB shares on your network via Bonjour/mDNS
 - **Manual add** – Add shares by IP/hostname (e.g. router at 192.168.1.1)
-- **File browsing** – Navigate folders and view files on network shares
-- **Share selection** – Pick from multiple shares when a server has several
-- **Credentials** – Optional username/password for protected shares
+- **Open in Files** – Opens discovered shares in the iOS Files app (built-in SMB support)
+- **Copy URL** – Copy the SMB URL to paste into Files app's Connect to Server
 
 ## Requirements
 
@@ -22,7 +21,7 @@ A modern iOS app that discovers devices and file shares on your local network an
 2. Select your development team in Signing & Capabilities.
 3. Build and run on a device or simulator.
 
-The app uses Swift Package Manager for AMSMB2; Xcode will fetch it on first build.
+No external dependencies – uses only system frameworks.
 
 ## Permissions
 
@@ -30,9 +29,9 @@ On first run, iOS will ask for **Local Network** access so the app can discover 
 
 ## Usage
 
-1. **Scan** – Tap the refresh button to discover SMB shares on your network.
-2. **Connect** – Tap a device to connect. Use guest access or enter credentials if needed.
-3. **Browse** – Navigate folders and view files.
+1. **Scan** – Tap the refresh button (or pull down) to discover SMB shares on your network.
+2. **Open** – Tap a device, then "Open in Files" to browse in the iOS Files app.
+3. **Copy URL** – If Open doesn't work, copy the URL and paste it in Files: Browse → ⋯ → Connect to Server.
 4. **Manual add** – Use the + button to add a share by IP (e.g. `192.168.1.1` for a router with USB storage).
 
 ## Troubleshooting: App Crashes on Launch

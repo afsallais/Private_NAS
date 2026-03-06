@@ -103,7 +103,7 @@ struct DeviceListView: View {
                 Section {
                     ForEach(discoveryService.devices) { device in
                         NavigationLink {
-                            FileExplorerView(device: device)
+                            DeviceDetailView(device: device)
                         } label: {
                             DeviceRow(device: device)
                         }
