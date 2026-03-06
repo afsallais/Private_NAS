@@ -59,7 +59,8 @@ struct DeviceListView: View {
             } message: {
                 Text(discoveryService.errorMessage ?? "")
             }
-            .onAppear {
+            .task {
+                try? await Task.sleep(for: .seconds(0.5))
                 if discoveryService.devices.isEmpty && !discoveryService.isScanning {
                     discoveryService.startScanning()
                 }

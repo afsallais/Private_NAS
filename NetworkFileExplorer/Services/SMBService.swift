@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Network
 import AMSMB2
 
 @MainActor
@@ -24,6 +25,35 @@ final class SMBService: ObservableObject {
         self.device = device
     }
     
+    private func resolveHost() async -> String? {
+        if let endpoint = device.endpoint {
+            return await withCheckedContinuation { continuation in
+                let connection = NWConnection(to: endpoint, using: .tcp)
+                connection.stateUpdateHandler = { state in
+                    switch state {
+                    case .ready:
+                        if let path = connection.currentPath,
+                           let remote = path.remoteEndpoint,
+                           case .hostPort(let host, _) = remote {
+                            let hostStr = "\(host)"
+                            connection.cancel()
+                            continuation.resume(returning: hostStr)
+                        } else {
+                            connection.cancel()
+                            continuation.resume(returning: nil)
+                        }
+                    case .failed, .cancelled:
+                        continuation.resume(returning: nil)
+                    default:
+                        break
+                    }
+                }
+                connection.start(queue: .global(qos: .userInitiated))
+            }
+        }
+        return device.host
+    }
+    
     func connect(username: String = "", password: String = "") async {
         isLoading = true
         errorMessage = nil
@@ -31,19 +61,25 @@ final class SMBService: ObservableObject {
         
         defer { isLoading = false }
         
-        let hostString = device.host
-            .addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? device.host
+        guard let resolvedHost = await resolveHost() else {
+            errorMessage = "Could not resolve host"
+            return
+        }
+        
+        let hostString = resolvedHost
+            .addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? resolvedHost
         
         guard let url = URL(string: "smb://\(hostString)"),
               let manager = SMB2Manager(
-            url: url,
-            credential: URLCredential(
-                user: username.isEmpty ? "guest" : username,
-                password: password,
-                persistence: .none
-            )
-        ) else {
-            errorMessage = "Could not connect to \(device.host)"
+                  url: url,
+                  credential: URLCredential(
+                      user: username.isEmpty ? "guest" : username,
+                      password: password,
+                      persistence: .none
+                  )
+              )
+        else {
+            errorMessage = "Could not connect to \(resolvedHost)"
             return
         }
         

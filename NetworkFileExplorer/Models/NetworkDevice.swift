@@ -4,14 +4,16 @@
 //
 
 import Foundation
+import Network
 
-struct NetworkDevice: Identifiable, Hashable {
+struct NetworkDevice: Identifiable {
     let id: String
     let name: String
     let host: String
     let port: Int
     let type: DeviceType
     let shareName: String?
+    let endpoint: NWEndpoint?
     
     enum DeviceType: String, CaseIterable {
         case smb = "SMB"
@@ -25,23 +27,9 @@ struct NetworkDevice: Identifiable, Hashable {
             case .afp: return "folder.fill"
             }
         }
-        
-        var displayName: String { rawValue }
     }
     
     var displayTitle: String {
         shareName.map { "\(name) (\($0))" } ?? name
-    }
-    
-    var connectionURL: String {
-        switch type {
-        case .smb:
-            let share = shareName ?? "shared"
-            return "smb://\(host)/\(share)"
-        case .http:
-            return "http://\(host):\(port)"
-        case .afp:
-            return "afp://\(host)"
-        }
     }
 }

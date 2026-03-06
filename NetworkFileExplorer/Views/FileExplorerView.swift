@@ -253,7 +253,8 @@ struct FileRow: View {
             host: "192.168.1.100",
             port: 445,
             type: .smb,
-            shareName: "shared"
+            shareName: "shared",
+            endpoint: nil
         ))
     }
 }

@@ -17,28 +17,32 @@ final class NetworkDiscoveryService: ObservableObject {
     private var browser: NWBrowser?
     private var discoveredEndpoints: Set<String> = []
     
-    private let smbType = "_smb._tcp"
-    
     func startScanning() {
         guard !isScanning else { return }
+        
+        stopScanning()
+        
         isScanning = true
         errorMessage = nil
         discoveredEndpoints.removeAll()
         devices.removeAll()
         
-        let parameters = NWParameters()
-        parameters.includePeerToPeer = true
+        let descriptor = NWBrowser.Descriptor.bonjour(type: "_smb._tcp", domain: nil)
+        let params = NWParameters()
+        params.includePeerToPeer = true
         
-        // Browse for SMB shares (most common for network storage)
-        let smbDescriptor = NWBrowser.Descriptor.bonjour(type: smbType, domain: "local.")
-        browser = NWBrowser(for: smbDescriptor, using: parameters)
+        let newBrowser = NWBrowser(for: descriptor, using: params)
+        browser = newBrowser
         
-        browser?.stateUpdateHandler = { [weak self] state in
-            Task { @MainActor in
+        newBrowser.stateUpdateHandler = { [weak self] state in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
                 switch state {
                 case .failed(let error):
-                    self?.errorMessage = "Discovery failed: \(error.localizedDescription)"
-                    self?.isScanning = false
+                    self.errorMessage = "Discovery failed: \(error.localizedDescription)"
+                    self.isScanning = false
+                case .cancelled:
+                    self.isScanning = false
                 case .ready:
                     break
                 default:
@@ -47,13 +51,13 @@ final class NetworkDiscoveryService: ObservableObject {
             }
         }
         
-        browser?.browseResultsChangedHandler = { [weak self] results, changes in
-            Task { @MainActor in
+        newBrowser.browseResultsChangedHandler = { [weak self] results, _ in
+            Task { @MainActor [weak self] in
                 self?.processResults(results)
             }
         }
         
-        browser?.start(queue: .main)
+        newBrowser.start(queue: .global(qos: .userInitiated))
     }
     
     func stopScanning() {
@@ -64,50 +68,26 @@ final class NetworkDiscoveryService: ObservableObject {
     
     private func processResults(_ results: Set<NWBrowser.Result>) {
         for result in results {
-            switch result.endpoint {
-            case .service(name: let name, type: let type, domain: let domain, interface: _):
+            if case .service(name: let name, type: let type, domain: let domain, interface: _) = result.endpoint {
                 let key = "\(name).\(type).\(domain)"
                 guard !discoveredEndpoints.contains(key) else { continue }
                 discoveredEndpoints.insert(key)
                 
-                resolveEndpoint(result.endpoint, serviceName: name, serviceType: type)
-            default:
-                break
-            }
-        }
-    }
-        
-    private func resolveEndpoint(_ endpoint: NWEndpoint, serviceName: String, serviceType: String) {
-        let connection = NWConnection(to: endpoint, using: .tcp)
-        
-        connection.stateUpdateHandler = { [weak self] state in
-            switch state {
-            case .ready:
-                if let inner = connection.currentPath?.remoteEndpoint,
-                   case .hostPort(let host, let port) = inner {
-                    Task { @MainActor in
-                        let device = NetworkDevice(
-                            id: "\(serviceName)-\(host)-\(port.rawValue)",
-                            name: serviceName,
-                            host: "\(host)",
-                            port: Int(port.rawValue),
-                            type: serviceType.contains("smb") ? .smb : .http,
-                            shareName: nil
-                        )
-                        if !(self?.devices.contains { $0.id == device.id } ?? false) {
-                            self?.devices.append(device)
-                            self?.devices.sort { $0.name < $1.name }
-                        }
-                    }
+                let device = NetworkDevice(
+                    id: key,
+                    name: name,
+                    host: name,
+                    port: 445,
+                    type: type.contains("smb") ? .smb : .http,
+                    shareName: nil,
+                    endpoint: result.endpoint
+                )
+                if !devices.contains(where: { $0.id == device.id }) {
+                    devices.append(device)
+                    devices.sort { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
                 }
-                connection.cancel()
-            case .failed, .cancelled:
-                connection.cancel()
-            default:
-                break
             }
         }
-        connection.start(queue: .main)
     }
     
     func addManualShare(host: String, shareName: String) {
@@ -117,11 +97,12 @@ final class NetworkDiscoveryService: ObservableObject {
             host: host,
             port: 445,
             type: .smb,
-            shareName: shareName
+            shareName: shareName,
+            endpoint: nil
         )
         if !devices.contains(where: { $0.id == device.id }) {
             devices.append(device)
-            devices.sort { $0.name < $1.name }
+            devices.sort { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         }
     }
 }

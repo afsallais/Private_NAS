@@ -63,7 +63,8 @@
 				A1000013 /* Assets.xcassets */,
 				A1000028 /* Info.plist */,
 			);
-			path = ".";
+			name = NetworkFileExplorer;
+			path = "";
 			sourceTree = "<group>";
 		};
 		A1000024 /* Products */ = {
