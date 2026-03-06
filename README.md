@@ -35,6 +35,24 @@ On first run, iOS will ask for **Local Network** access so the app can discover 
 3. **Browse** – Navigate folders and view files.
 4. **Manual add** – Use the + button to add a share by IP (e.g. `192.168.1.1` for a router with USB storage).
 
+## Troubleshooting: App Crashes on Launch
+
+If the app crashes when you open it (especially from TestFlight):
+
+1. **Add Local Network capability**  
+   In Xcode: select the project → **Signing & Capabilities** → **+ Capability** → add **Local Network**.
+
+2. **Get the crash log**  
+   - **Xcode**: Window → Organizer → Crashes  
+   - **Device**: Settings → Privacy & Security → Analytics & Improvements → Analytics Data → find your app’s crash  
+   - **App Store Connect**: Your App → TestFlight → Feedback → Crashes  
+
+3. **Test from Xcode**  
+   Build and run directly from Xcode on a device. If it works there but crashes from TestFlight, the issue may be release build or signing related.
+
+4. **Clean build**  
+   Product → Clean Build Folder (⇧⌘K), then delete Derived Data and rebuild.
+
 ## Router USB Storage
 
 Many routers share USB drives over SMB. If your router supports this:
