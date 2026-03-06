@@ -67,7 +67,7 @@ final class NetworkDiscoveryService: ObservableObject {
     private func processResults(_ results: Set<NWBrowser.Result>) {
         for result in results {
             switch result.endpoint {
-            case .service(name: let name, type: let type, domain: _, interface: _):
+            case .service(name: let name, type: let type, domain: let domain, interface: _):
                 let key = "\(name).\(type).\(domain)"
                 guard !discoveredEndpoints.contains(key) else { continue }
                 discoveredEndpoints.insert(key)
