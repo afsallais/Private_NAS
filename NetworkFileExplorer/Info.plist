@@ -6,8 +6,7 @@
 	<string>This app discovers devices and file shares on your local network.</string>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_smb._tcp</string>
-		<string>_afpovertcp._tcp</string>
+		<string>_smb._tcp.</string>
 	</array>
 </dict>
 </plist>

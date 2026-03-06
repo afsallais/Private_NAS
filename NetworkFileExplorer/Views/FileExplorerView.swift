@@ -11,6 +11,7 @@ struct FileExplorerView: View {
     let device: NetworkDevice
     @StateObject private var smbService: SMBService
     @State private var showCredentials = false
+    @State private var showError = false
     @State private var username = ""
     @State private var password = ""
     
@@ -45,14 +46,15 @@ struct FileExplorerView: View {
         .sheet(isPresented: $showCredentials) {
             credentialsSheet
         }
-        .alert("Error", isPresented: .constant(smbService.errorMessage != nil)) {
+        .onChange(of: smbService.errorMessage) { _, newValue in
+            showError = newValue != nil
+        }
+        .alert("Error", isPresented: $showError) {
             Button("OK") {
                 smbService.errorMessage = nil
             }
         } message: {
-            if let error = smbService.errorMessage {
-                Text(error)
-            }
+            Text(smbService.errorMessage ?? "")
         }
     }
     

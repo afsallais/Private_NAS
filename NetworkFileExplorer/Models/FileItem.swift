@@ -15,17 +15,20 @@ struct FileItem: Identifiable {
     
     var icon: String {
         if isDirectory { return "folder.fill" }
-        switch name.lowercased().suffix(4) {
-        case ".jpg", ".png", ".gif", ".heic", "webp":
+        let ext = (name as NSString).pathExtension.lowercased()
+        switch ext {
+        case "jpg", "jpeg", "png", "gif", "heic", "webp", "bmp", "tiff":
             return "photo.fill"
-        case ".mp4", ".mov", ".avi", "mkv":
+        case "mp4", "mov", "avi", "mkv", "wmv", "flv":
             return "film.fill"
-        case ".mp3", ".m4a", ".wav":
+        case "mp3", "m4a", "wav", "aac", "flac":
             return "music.note"
-        case ".pdf":
+        case "pdf":
             return "doc.fill"
-        case ".txt", ".md":
+        case "txt", "md", "rtf", "log":
             return "doc.text.fill"
+        case "zip", "rar", "7z", "tar", "gz":
+            return "doc.zipper"
         default:
             return "doc.fill"
         }

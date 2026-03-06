@@ -10,6 +10,7 @@ import SwiftUI
 struct DeviceListView: View {
     @EnvironmentObject var discoveryService: NetworkDiscoveryService
     @State private var showAddManual = false
+    @State private var showError = false
     @State private var manualHost = ""
     @State private var manualShare = "shared"
     
@@ -48,14 +49,15 @@ struct DeviceListView: View {
             .sheet(isPresented: $showAddManual) {
                 addManualSheet
             }
-            .alert("Error", isPresented: .constant(discoveryService.errorMessage != nil)) {
+            .onChange(of: discoveryService.errorMessage) { _, newValue in
+                showError = newValue != nil
+            }
+            .alert("Error", isPresented: $showError) {
                 Button("OK") {
                     discoveryService.errorMessage = nil
                 }
             } message: {
-                if let error = discoveryService.errorMessage {
-                    Text(error)
-                }
+                Text(discoveryService.errorMessage ?? "")
             }
         }
     }

@@ -18,8 +18,6 @@ final class NetworkDiscoveryService: ObservableObject {
     private var discoveredEndpoints: Set<String> = []
     
     private let smbType = "_smb._tcp"
-    private let afpType = "_afpovertcp._tcp"
-    private let httpType = "_http._tcp"
     
     func startScanning() {
         guard !isScanning else { return }

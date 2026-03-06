@@ -31,10 +31,11 @@ final class SMBService: ObservableObject {
         
         defer { isLoading = false }
         
-        // AMSMB2 expects smb://host (no share in URL)
-        let url = URL(string: "smb://\(device.host)")!
+        let hostString = device.host
+            .addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? device.host
         
-        guard let manager = SMB2Manager(
+        guard let url = URL(string: "smb://\(hostString)"),
+              let manager = SMB2Manager(
             url: url,
             credential: URLCredential(
                 user: username.isEmpty ? "guest" : username,
@@ -42,7 +43,7 @@ final class SMBService: ObservableObject {
                 persistence: .none
             )
         ) else {
-            errorMessage = "Invalid server URL"
+            errorMessage = "Could not connect to \(device.host)"
             return
         }
         
