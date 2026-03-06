@@ -73,15 +73,29 @@ struct FileExplorerView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
             
-            Button {
-                showCredentials = true
-            } label: {
-                Label("Connect", systemImage: "link")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
+            VStack(spacing: 12) {
+                Button {
+                    Task {
+                        await smbService.connect()
+                    }
+                } label: {
+                    Label("Guest Connect", systemImage: "person")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                }
+                .buttonStyle(.borderedProminent)
+                
+                Button {
+                    showCredentials = true
+                } label: {
+                    Label("Sign In", systemImage: "lock")
+                        .font(.subheadline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(.bordered)
             }
-            .buttonStyle(.borderedProminent)
             .padding(.horizontal, 40)
             .padding(.top, 8)
         }
@@ -129,15 +143,29 @@ struct FileExplorerView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List {
-                    ForEach(smbService.items) { item in
-                        Button {
-                            Task {
-                                await smbService.navigate(to: item)
-                            }
-                        } label: {
-                            FileRow(item: item)
+                    if smbService.currentPath != "/" {
+                        Section {
+                            Text(smbService.currentPath)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .truncationMode(.head)
                         }
-                        .disabled(!item.isDirectory)
+                    }
+                    
+                    Section {
+                        ForEach(smbService.items) { item in
+                            Button {
+                                Task {
+                                    await smbService.navigate(to: item)
+                                }
+                            } label: {
+                                FileRow(item: item)
+                            }
+                            .disabled(!item.isDirectory)
+                        }
+                    } header: {
+                        Text("\(smbService.items.count) item\(smbService.items.count == 1 ? "" : "s")")
                     }
                 }
                 .listStyle(.insetGrouped)
@@ -197,10 +225,11 @@ struct FileRow: View {
                 Text(item.name)
                     .font(.body.weight(.medium))
                     .lineLimit(1)
-                if !item.formattedSize.isEmpty {
-                    Text(item.formattedSize)
+                if !item.subtitle.isEmpty {
+                    Text(item.subtitle)
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
             }
             

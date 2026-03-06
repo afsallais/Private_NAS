@@ -59,6 +59,11 @@ struct DeviceListView: View {
             } message: {
                 Text(discoveryService.errorMessage ?? "")
             }
+            .onAppear {
+                if discoveryService.devices.isEmpty && !discoveryService.isScanning {
+                    discoveryService.startScanning()
+                }
+            }
         }
     }
     
@@ -110,6 +115,10 @@ struct DeviceListView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .refreshable {
+            discoveryService.startScanning()
+            try? await Task.sleep(for: .seconds(3))
+        }
     }
     
     private var addManualSheet: some View {

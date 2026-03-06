@@ -40,4 +40,16 @@ struct FileItem: Identifiable {
         formatter.countStyle = .file
         return formatter.string(fromByteCount: size)
     }
+    
+    var formattedDate: String {
+        guard let date = modifiedDate else { return "" }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+    
+    var subtitle: String {
+        [formattedSize, formattedDate].filter { !$0.isEmpty }.joined(separator: " · ")
+    }
 }
