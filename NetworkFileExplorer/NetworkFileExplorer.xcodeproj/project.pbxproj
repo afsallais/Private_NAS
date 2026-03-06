@@ -11,12 +11,9 @@
 		A1000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000012 /* ContentView.swift */; };
 		A1000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000013 /* Assets.xcassets */; };
 		A1000004 /* NetworkDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000014 /* NetworkDevice.swift */; };
-		A1000005 /* FileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000015 /* FileItem.swift */; };
 		A1000006 /* NetworkDiscoveryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000016 /* NetworkDiscoveryService.swift */; };
-		A1000007 /* SMBService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000017 /* SMBService.swift */; };
 		A1000008 /* DeviceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000018 /* DeviceListView.swift */; };
-		A1000009 /* FileExplorerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000019 /* FileExplorerView.swift */; };
-		A1000010 /* AMSMB2 in Frameworks */ = {isa = PBXBuildFile; productRef = A1000020 /* AMSMB2 */; };
+		A100003B /* DeviceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100003C /* DeviceDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,11 +22,9 @@
 		A1000012 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A1000013 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000014 /* NetworkDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDevice.swift; sourceTree = "<group>"; };
-		A1000015 /* FileItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
 		A1000016 /* NetworkDiscoveryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDiscoveryService.swift; sourceTree = "<group>"; };
-		A1000017 /* SMBService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMBService.swift; sourceTree = "<group>"; };
 		A1000018 /* DeviceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceListView.swift; sourceTree = "<group>"; };
-		A1000019 /* FileExplorerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileExplorerView.swift; sourceTree = "<group>"; };
+		A100003C /* DeviceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailView.swift; sourceTree = "<group>"; };
 		A1000028 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -38,7 +33,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1000010 /* AMSMB2 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,12 +42,12 @@
 		A1000022 = {
 			isa = PBXGroup;
 			children = (
-				A1000023 /* . */,
+				A1000023 /* NetworkFileExplorer */,
 				A1000024 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		A1000023 /* . */ = {
+		A1000023 /* NetworkFileExplorer */ = {
 			isa = PBXGroup;
 			children = (
 				A1000011 /* NetworkFileExplorerApp.swift */,
@@ -64,7 +58,7 @@
 				A1000013 /* Assets.xcassets */,
 				A1000028 /* Info.plist */,
 			);
-			path = .;
+			path = "";
 			sourceTree = "<group>";
 		};
 		A1000024 /* Products */ = {
@@ -79,7 +73,6 @@
 			isa = PBXGroup;
 			children = (
 				A1000014 /* NetworkDevice.swift */,
-				A1000015 /* FileItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -88,7 +81,6 @@
 			isa = PBXGroup;
 			children = (
 				A1000016 /* NetworkDiscoveryService.swift */,
-				A1000017 /* SMBService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -97,7 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				A1000018 /* DeviceListView.swift */,
-				A1000019 /* FileExplorerView.swift */,
+				A100003C /* DeviceDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -118,9 +110,6 @@
 			dependencies = (
 			);
 			name = "Network File Explorer";
-			packageProductDependencies = (
-				A1000020 /* AMSMB2 */,
-			);
 			productName = "Network File Explorer";
 			productReference = A1000000 /* Network File Explorer.app */;
 			productType = "com.apple.product-type.application";
@@ -149,9 +138,6 @@
 				Base,
 			);
 			mainGroup = A1000022;
-			packageReferences = (
-				A1000035 /* XCRemoteSwiftPackageReference "AMSMB2" */,
-			);
 			productRefGroup = A1000024 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -180,11 +166,9 @@
 				A1000001 /* NetworkFileExplorerApp.swift in Sources */,
 				A1000002 /* ContentView.swift in Sources */,
 				A1000004 /* NetworkDevice.swift in Sources */,
-				A1000005 /* FileItem.swift in Sources */,
 				A1000006 /* NetworkDiscoveryService.swift in Sources */,
-				A1000007 /* SMBService.swift in Sources */,
 				A1000008 /* DeviceListView.swift in Sources */,
-				A1000009 /* FileExplorerView.swift in Sources */,
+				A100003B /* DeviceDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,24 +379,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		A1000035 /* XCRemoteSwiftPackageReference "AMSMB2" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/amosavian/AMSMB2";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 3.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		A1000020 /* AMSMB2 */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A1000035 /* XCRemoteSwiftPackageReference "AMSMB2" */;
-			productName = AMSMB2;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A1000033 /* Project object */;
 }
