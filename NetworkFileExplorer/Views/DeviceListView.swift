@@ -26,23 +26,23 @@ struct DeviceListView: View {
             .navigationTitle("Network")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    if discoveryService.isScanning {
-                        Button("Stop") {
-                            discoveryService.stopScanning()
-                        }
-                    } else {
+                    HStack(spacing: 16) {
                         Button {
-                            discoveryService.startScanning()
+                            showAddManual = true
                         } label: {
-                            Image(systemName: "arrow.clockwise")
+                            Image(systemName: "plus.circle")
                         }
-                    }
-                }
-                ToolbarItem(placement: .secondaryAction) {
-                    Button {
-                        showAddManual = true
-                    } label: {
-                        Image(systemName: "plus.circle")
+                        if discoveryService.isScanning {
+                            Button("Stop") {
+                                discoveryService.stopScanning()
+                            }
+                        } else {
+                            Button {
+                                discoveryService.startScanning()
+                            } label: {
+                                Image(systemName: "arrow.clockwise")
+                            }
+                        }
                     }
                 }
             }
@@ -83,16 +83,28 @@ struct DeviceListView: View {
         List {
             if discoveryService.devices.isEmpty && !discoveryService.isScanning {
                 Section {
-                    VStack(spacing: 12) {
+                    VStack(spacing: 20) {
                         Image(systemName: "wifi.slash")
                             .font(.system(size: 48))
                             .foregroundStyle(.secondary)
                         Text("No devices found")
                             .font(.headline)
-                        Text("Tap the refresh button to scan your network")
+                        Text("Add your router or NAS manually if it doesn't appear")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
+                        
+                        Button {
+                            showAddManual = true
+                        } label: {
+                            Label("Add Share Manually", systemImage: "plus.circle.fill")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 8)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 32)
